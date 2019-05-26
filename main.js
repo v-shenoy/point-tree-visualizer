@@ -1,12 +1,11 @@
 let tree;
+let drawGrid = true;
 
 function setup()
 {
-    createCanvas(500, 500);
-    background(0);
-    let boundary = new Bound2D(250, 250, 250, 250);
-    tree = new QuadTree(boundary, 0);
-    for(let i = 0; i < 10; i++)
+    createCanvas(600, 600);
+    tree = new QuadTree(new Bound2D(width/2, height/2, width, height), 0);
+    for(let i=0;i<100;i++)
     {
         tree.insert(new Point2D(random(width), random(height)));
     }
@@ -14,5 +13,12 @@ function setup()
 
 function draw()
 {
+    clear();
+    background(0);
     tree.show();
 }
+
+let balance = document.querySelector("#balance");
+balance.addEventListener("click", () => {
+    tree.balance();
+});
