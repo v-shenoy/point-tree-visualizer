@@ -1,9 +1,17 @@
-let displayGrid = true;
-let toggleGrid = document.querySelector("#toggle-grid");
+let displayGrid = false;
+const toggleGrid = document.querySelector("#toggle-grid");
 
 toggleGrid.addEventListener("click", () => {
     displayGrid = !displayGrid;
+    drawTree();
 });
+
+const direction = {
+    NW : 1,
+    NE : 2,
+    SW : 3,
+    SE : 4
+}
 
 class QuadTree
 {
@@ -26,13 +34,13 @@ class QuadTree
     {
         let bounds = this.bounds;
         let nwBounds = new Bound2D(bounds.x - bounds.l/2, bounds.y - bounds.b/2, bounds.l/2, bounds.b/2);
-        this.nw = new QuadTree(nwBounds, this.depth + 1, this, 1);
+        this.nw = new QuadTree(nwBounds, this.depth + 1, this, direction.NW);
         let neBounds = new Bound2D(bounds.x + bounds.l/2, bounds.y - bounds.b/2, bounds.l/2, bounds.b/2);
-        this.ne = new QuadTree(neBounds, this.depth + 1, this, 2);
+        this.ne = new QuadTree(neBounds, this.depth + 1, this, direction.NE);
         let swBounds = new Bound2D(bounds.x - bounds.l/2, bounds.y + bounds.b/2, bounds.l/2, bounds.b/2);
-        this.sw = new QuadTree(swBounds, this.depth + 1, this, 3);
+        this.sw = new QuadTree(swBounds, this.depth + 1, this, direction.SW);
         let seBounds = new Bound2D(bounds.x + bounds.l/2, bounds.y + bounds.b/2, bounds.l/2, bounds.b/2);
-        this.se = new QuadTree(seBounds, this.depth + 1, this, 4);
+        this.se = new QuadTree(seBounds, this.depth + 1, this, direction.SE);
         this.hasDivided = true;
         let point = this.point;
         this.point = null;
@@ -102,7 +110,7 @@ class QuadTree
     {
         let path = []
         let node = this;
-        while(node.parent != null && node.dir != 3 && node.dir != 4)
+        while(node.parent != null && node.dir != direction.SW && node.dir != direction.SE)
         {
             path.push(node.dir);
             node = node.parent;
@@ -122,11 +130,11 @@ class QuadTree
         while(node.hasDivided == true && path.length > 0)
         {
             let dir = path.pop();
-            if(dir == 1)
+            if(dir == direction.NW)
             {
                 node = node.sw;
             }
-            else if(dir == 2)
+            else if(dir == direction.NE)
             {
                 node = node.se;
             }
@@ -145,7 +153,7 @@ class QuadTree
     {
         let path = []
         let node = this;
-        while(node.parent != null && node.dir != 1 && node.dir != 3)
+        while(node.parent != null && node.dir != direction.NW && node.dir != direction.SW)
         {
             path.push(node.dir);
             node = node.parent;
@@ -154,7 +162,7 @@ class QuadTree
         {
             return null;
         }
-        else if(node.dir == 1)
+        else if(node.dir == direction.NW)
         {
             node = node.parent.ne;
         }
@@ -165,11 +173,11 @@ class QuadTree
         while(node.hasDivided == true && path.length > 0)
         {
             let dir = path.pop();
-            if(dir == 2)
+            if(dir == direction.NE)
             {
                 node = node.nw;
             }
-            else if(dir == 4)
+            else if(dir == direction.SE)
             {
                 node = node.sw;
             }
@@ -188,7 +196,7 @@ class QuadTree
     {
         let path = []
         let node = this;
-        while(node.parent != null && node.dir != 1 && node.dir != 2)
+        while(node.parent != null && node.dir != direction.NW && node.dir != direction.NE)
         {
             path.push(node.dir);
             node = node.parent;
@@ -197,7 +205,7 @@ class QuadTree
         {
             return null;
         }
-        else if(node.dir == 1)
+        else if(node.dir == direction.NW)
         {
             node = node.parent.sw;
         }
@@ -208,11 +216,11 @@ class QuadTree
         while(node.hasDivided == true && path.length > 0)
         {
             let dir = path.pop();
-            if(dir == 3)
+            if(dir == direction.SW)
             {
                 node = node.nw;
             }
-            else if(dir == 4)
+            else if(dir == direction.SE)
             {
                 node = node.ne;
             }
@@ -231,7 +239,7 @@ class QuadTree
     {
         let path = []
         let node = this;
-        while(node.parent != null && node.dir != 2 && node.dir != 4)
+        while(node.parent != null && node.dir != direction.NE && node.dir != direction.SE)
         {
             path.push(node.dir);
             node = node.parent;
@@ -240,7 +248,7 @@ class QuadTree
         {
             return null;
         }
-        else if(node.dir == 2)
+        else if(node.dir == direction.NE)
         {
             node = node.parent.nw;
         }
@@ -251,11 +259,11 @@ class QuadTree
         while(node.hasDivided == true && path.length > 0)
         {
             let dir = path.pop();
-            if(dir == 1)
+            if(dir == direction.NW)
             {
                 node = node.ne;
             }
-            else if(dir == 3)
+            else if(dir == direction.SW)
             {
                 node = node.se;
             }
@@ -321,7 +329,6 @@ class QuadTree
         }
         else
         {
-            console.log(this.bounds.x);
             if(this.point != null)
             {
                 stroke(0, 255, 0);
