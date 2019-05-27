@@ -321,16 +321,17 @@ class QuadTree
         }
         else
         {
+            console.log(this.bounds.x);
             if(this.point != null)
             {
                 stroke(0, 255, 0);
-                // strokeWeight(3);
+                strokeWeight(2);
                 point(this.point.x, this.point.y);
             }
             else
             {
                 stroke(255, 0, 0);
-                // strokeWeight(3);
+                strokeWeight(2);
                 point(this.bounds.x, this.bounds.y);
             }
         }
