@@ -90,22 +90,6 @@ class QuadTree
         }
     }
 
-    divideUntil(depth)
-    {
-        if(this.depth >= depth)
-        {
-            return;
-        }
-        else
-        {
-            this.divide();
-            this.nw.divideUntil(depth);
-            this.ne.divideUntil(depth);
-            this.sw.divideUntil(depth);
-            this.se.divideUntil(depth);
-        }
-    }
-
     findNorthNeighbour()
     {
         let path = []
@@ -119,7 +103,7 @@ class QuadTree
         {
             return null;
         }
-        else if(node.dir == 3)
+        else if(node.dir == direction.SW)
         {
             node = node.parent.nw;
         }
@@ -127,7 +111,7 @@ class QuadTree
         {
             node = node.parent.ne;
         }
-        while(node.hasDivided == true && path.length > 0)
+        while(node.hasDivided && path.length > 0)
         {
             let dir = path.pop();
             if(dir == direction.NW)
@@ -280,32 +264,78 @@ class QuadTree
 
     findNeighbours()
     {
-        let neighbours = [];
-        neighbours.push(this.findNorthNeighbour());
-        neighbours.push(this.findEastNeighbour());
-        neighbours.push(this.findSouthNeighbour());
-        neighbours.push(this.findWestNeighbour());
+        let neighbours = {
+            north: this.findNorthNeighbour(),
+            east: this.findEastNeighbour(),
+            south: this.findSouthNeighbour(),
+            west: this.findWestNeighbour()
+        };    
         return neighbours;
     }
 
-    balance()
+    balanceNorth(node)
+    {
+        if(this.depth < node.depth - 1)
+        {
+            this.divide();
+            node.findNorthNeighbour().balanceNorth(node);
+        }
+    }
+
+    balanceEast(node)
+    {
+        if(this.depth < node.depth - 1)
+        {
+            this.divide();
+            node.findEastNeighbour().balanceEast(node);
+        }
+    }
+
+    balanceSouth(node)
+    {
+        if(this.depth < node.depth - 1)
+        {
+            this.divide();
+            node.findSouthNeighbour().balanceSouth(node);
+        }
+    }
+
+    balanceWest(node)
+    {
+        if(this.depth < node.depth - 1)
+        {
+            this.divide();
+            node.findWestNeighbour().balanceWest(node);
+        }
+    }
+
+    zeroBalance()
     {
         if(this.hasDivided)
         {
-            this.nw.balance();
-            this.ne.balance();
-            this.sw.balance();
-            this.se.balance();
+            this.nw.zeroBalance();
+            this.ne.zeroBalance();
+            this.sw.zeroBalance();
+            this.se.zeroBalance();
         }
         else
         {
             let neighbours = this.findNeighbours();
-            for(let neighbour of neighbours)
+            if(neighbours.north != null && !neighbours.north.hasDivided)
             {
-                if(neighbour != null)
-                {
-                    neighbour.divideUntil(this.depth - 1);
-                }
+                neighbours.north.balanceNorth(this);
+            }
+            if(neighbours.east != null && !neighbours.east.hasDivided)
+            {
+                neighbours.east.balanceEast(this);
+            }
+            if(neighbours.south != null && !neighbours.south.hasDivided)
+            {
+                neighbours.south.balanceSouth(this);
+            }
+            if(neighbours.west != null && !neighbours.west.hasDivided)
+            {
+                neighbours.west.balanceWest(this);
             }
         }
     }

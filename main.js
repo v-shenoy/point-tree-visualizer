@@ -2,7 +2,7 @@ let tree;
 
 function setup()
 {
-    createCanvas(1300, 1300);
+    createCanvas(1500, 1500);
     tree = new QuadTree(new Bound2D(width/2, height/2, width/2, height/2), 0);
     drawTree();
 }
@@ -31,7 +31,7 @@ function loadPoints()
         {
             inputPoint = line.split("\t");
             x = parseFloat(inputPoint[0]);
-            y = parseFloat(inputPoint[1]);            
+            y = parseFloat(inputPoint[1]);
             tree.insert(new Point2D(x*width/2+width/2, y*height/2+height/2));
         }
         drawTree();
@@ -41,9 +41,9 @@ function loadPoints()
 const load = document.querySelector("#load");
 load.addEventListener("click", loadPoints);
 
-const balance = document.querySelector("#balance");
-balance.addEventListener("click", () => {
-    tree.balance();
+const zeroBalance = document.querySelector("#zeroBalance");
+zeroBalance.addEventListener("click", () => {
+    tree.zeroBalance();
     drawTree();
 });
 
