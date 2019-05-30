@@ -279,7 +279,9 @@ class QuadTree
         {
             this.divide();
             node.findNorthNeighbour().balanceNorth(node);
+            return true;
         }
+        return false;
     }
 
     balanceEast(node)
@@ -288,7 +290,9 @@ class QuadTree
         {
             this.divide();
             node.findEastNeighbour().balanceEast(node);
+            return true;
         }
+        return false;
     }
 
     balanceSouth(node)
@@ -297,7 +301,9 @@ class QuadTree
         {
             this.divide();
             node.findSouthNeighbour().balanceSouth(node);
+            return true;
         }
+        return false;
     }
 
     balanceWest(node)
@@ -306,38 +312,90 @@ class QuadTree
         {
             this.divide();
             node.findWestNeighbour().balanceWest(node);
+            return true;
         }
+        return false;
     }
 
     zeroBalance()
     {
+        let ans = false;
         if(this.hasDivided)
         {
-            this.nw.zeroBalance();
-            this.ne.zeroBalance();
-            this.sw.zeroBalance();
-            this.se.zeroBalance();
+            ans = this.nw.zeroBalance() || ans;
+            ans = this.ne.zeroBalance() || ans;
+            ans = this.sw.zeroBalance() || ans;
+            ans = this.se.zeroBalance() || ans;
         }
         else
         {
             let neighbours = this.findNeighbours();
-            if(neighbours.north != null && !neighbours.north.hasDivided)
+            if(neighbours.north != null)
             {
-                neighbours.north.balanceNorth(this);
+                ans = neighbours.north.balanceNorth(this) || ans;
             }
-            if(neighbours.east != null && !neighbours.east.hasDivided)
+            if(neighbours.east != null)
             {
-                neighbours.east.balanceEast(this);
+                ans = neighbours.east.balanceEast(this) || ans;
             }
-            if(neighbours.south != null && !neighbours.south.hasDivided)
+            if(neighbours.south != null)
             {
-                neighbours.south.balanceSouth(this);
+                ans = neighbours.south.balanceSouth(this) || ans;
             }
-            if(neighbours.west != null && !neighbours.west.hasDivided)
+            if(neighbours.west != null)
             {
-                neighbours.west.balanceWest(this);
+                ans = neighbours.west.balanceWest(this) || ans;
             }
         }
+        return ans;
+    }
+
+    oneBalance()
+    {
+        let ans = false;
+        if(this.hasDivided)
+        {
+            ans = this.nw.oneBalance() || ans;
+            ans = this.ne.oneBalance() || ans;
+            ans = this.sw.oneBalance() || ans;
+            ans = this.se.oneBalance() || ans;
+        }
+        else
+        {
+            let north = this.findNorthNeighbour();
+            if(north != null)
+            {
+                let ne = north.findEastNeighbour();
+                if(ne != null && ne.depth < this.depth - 1)
+                {
+                    ne.divide();
+                    ans = true;
+                }
+                let nw = north.findWestNeighbour();
+                if(nw != null && nw.depth < this.depth - 1)
+                {
+                    nw.divide();
+                    ans = true;
+                }
+            }
+            let south = this.findSouthNeighbour();
+            if(south != null)
+            {
+                let se = south.findEastNeighbour();
+                if(se != null && se.depth < this.depth - 1)
+                {
+                    se.divide();
+                    ans = true;
+                }
+                let sw = south.findWestNeighbour();
+                if(sw != null && sw.depth < this.depth - 1)
+                {
+                    sw.divide();
+                    ans = true;
+                }
+            }
+        }
+        return ans;
     }
 
     show()

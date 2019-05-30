@@ -2,7 +2,7 @@ let tree;
 
 function setup()
 {
-    createCanvas(1500, 1500);
+    createCanvas(1300, 1300);
     tree = new QuadTree(new Bound2D(width/2, height/2, width/2, height/2), 0);
     drawTree();
 }
@@ -43,7 +43,23 @@ load.addEventListener("click", loadPoints);
 
 const zeroBalance = document.querySelector("#zeroBalance");
 zeroBalance.addEventListener("click", () => {
-    tree.zeroBalance();
+    let repeat = false;
+    do
+    {
+        repeat = tree.zeroBalance();
+    }
+    while(repeat);
+    drawTree();
+});
+
+const oneBalance = document.querySelector("#oneBalance");
+oneBalance.addEventListener("click", () => {
+    let repeat = false;
+    do
+    {
+        repeat = tree.oneBalance();
+    }
+    while(repeat);
     drawTree();
 });
 
