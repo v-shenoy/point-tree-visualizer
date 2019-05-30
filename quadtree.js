@@ -6,6 +6,16 @@ toggleGrid.addEventListener("click", () => {
     drawTree();
 });
 
+let slider = document.querySelector("#slider");
+let pointWeight = slider.value;
+slider.title = "Range = [" + slider.min + "," + slider.max + "], Current = " + pointWeight;
+
+slider.addEventListener("change", () => {
+    pointWeight = slider.value;
+    slider.title = "Range = [" + slider.min + "," + slider.max + "], Current = " + pointWeight;
+    drawTree();
+});
+
 const direction = {
     NW : 1,
     NE : 2,
@@ -420,13 +430,13 @@ class QuadTree
             if(this.point != null)
             {
                 stroke(0, 255, 0);
-                strokeWeight(2);
+                strokeWeight(pointWeight);
                 point(this.point.x, this.point.y);
             }
             else
             {
                 stroke(255, 0, 0);
-                strokeWeight(2);
+                strokeWeight(pointWeight);
                 point(this.bounds.x, this.bounds.y);
             }
         }
